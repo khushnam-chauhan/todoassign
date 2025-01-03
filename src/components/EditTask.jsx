@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTaskContext } from '../context/TaskContext';
-import { apiService } from '../apiService';
+import { apiService } from '../services/apiService';
+import { Save, Trash2 } from 'lucide-react';
 
 function EditTask() {
   const { id } = useParams();
@@ -40,26 +41,26 @@ function EditTask() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-  
+
     try {
-      const updatedTask = await apiService.updateTask(parseInt(id), {
+      const updatedTask = await apiService.updateTask(id, {
         ...formData,
         id: parseInt(id),
         userId: 1 // Required by JSONPlaceholder
       });
-  
-      console.log('Updated Task:', updatedTask); // Debugging
-  
-      dispatch({ type: 'UPDATE_TASK', payload: updatedTask });
+      
+      dispatch({ 
+        type: 'UPDATE_TASK', 
+        payload: updatedTask
+      });
+      
       navigate('/');
     } catch (err) {
-      console.error(err);
       setError('Failed to update task. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-  
 
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this task?')) return;
@@ -83,11 +84,11 @@ function EditTask() {
   }
 
   return (
-    <div className="max-w-lg mx-auto">
-      <h2 className="text-2xl font-semibold mb-4">Edit Task</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-2xl mx-auto">
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">Edit Task</h2>
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Title
           </label>
           <input
@@ -96,13 +97,12 @@ function EditTask() {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             required
           />
         </div>
-
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Description
           </label>
           <textarea
@@ -111,10 +111,9 @@ function EditTask() {
             value={formData.description}
             onChange={handleChange}
             rows="3"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           />
         </div>
-
         <div className="flex items-center">
           <input
             type="checkbox"
@@ -122,28 +121,28 @@ function EditTask() {
             name="completed"
             checked={formData.completed}
             onChange={handleChange}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
           />
-          <label htmlFor="completed" className="ml-2 block text-sm text-gray-700">
+          <label htmlFor="completed" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
             Mark as completed
           </label>
         </div>
-
-        <div className="flex space-x-4 pt-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-          >
-            {loading ? 'Saving...' : 'Save Changes'}
-          </button>
+        <div className="flex justify-end space-x-4 pt-4">
           <button
             type="button"
             onClick={handleDelete}
-            disabled={loading}
-            className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
-            {loading ? 'Deleting...' : 'Delete Task'}
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete Task
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {loading ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </form>

@@ -1,7 +1,7 @@
-// components/TaskList.js
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTaskContext } from '../context/TaskContext';
+import { CheckCircle, Circle, Edit2 } from 'lucide-react';
 
 function TaskList() {
   const { state, dispatch } = useTaskContext();
@@ -24,28 +24,33 @@ function TaskList() {
   }, [dispatch]);
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold mb-4">Task List</h2>
-      <div className="grid gap-4">
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Your Tasks</h2>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {state.tasks.map(task => (
           <div
             key={task.id}
-            className="bg-white p-4 rounded-lg shadow"
+            className="bg-white dark:bg-gray-800 overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300 ease-in-out"
           >
-            <h3 className="font-medium text-lg">{task.title}</h3>
-            <p className="text-gray-600 mt-1">{task.description}</p>
-            <div className="mt-2 flex justify-between items-center">
-              <span className={`px-2 py-1 rounded text-sm ${
-                task.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {task.completed ? 'Completed' : 'Pending'}
-              </span>
-              <Link
-                to={`/edit/${task.id}`}
-                className="text-blue-600 hover:text-blue-800"
-              >
-                Edit
-              </Link>
+            <div className="p-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{task.title}</h3>
+                {task.completed ? (
+                  <CheckCircle className="h-6 w-6 text-green-500" />
+                ) : (
+                  <Circle className="h-6 w-6 text-yellow-500" />
+                )}
+              </div>
+              <p className="mt-2 text-gray-600 dark:text-gray-300">{task.description}</p>
+              <div className="mt-4 flex justify-end">
+                <Link
+                  to={`/edit/${task.id}`}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-indigo-100 hover:bg-indigo-200 dark:text-indigo-400 dark:bg-gray-700 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Edit
+                </Link>
+              </div>
             </div>
           </div>
         ))}

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTaskContext } from '../context/TaskContext';
-import { apiService } from '../apiService';
+import { apiService } from '../services/apiService';
+import { PlusCircle, X } from 'lucide-react';
 
 function AddTask() {
   const navigate = useNavigate();
@@ -26,37 +27,37 @@ function AddTask() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-  
+
     try {
       const newTask = await apiService.addTask({
         ...formData,
         userId: 1 // Required by JSONPlaceholder
       });
-  
-      console.log('New Task:', newTask); // Debugging
-  
-      dispatch({ type: 'ADD_TASK', payload: newTask });
+
+      dispatch({
+        type: 'ADD_TASK',
+        payload: newTask
+      });
+
       navigate('/');
     } catch (err) {
-      console.error(err);
       setError('Failed to add task. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-  
 
   return (
-    <div className="max-w-lg mx-auto">
-      <h2 className="text-2xl font-semibold mb-4">Add New Task</h2>
+    <div className="max-w-2xl mx-auto">
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">Add New Task</h2>
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+          <p>{error}</p>
         </div>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Title
           </label>
           <input
@@ -65,12 +66,12 @@ function AddTask() {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             required
           />
         </div>
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Description
           </label>
           <textarea
@@ -79,7 +80,7 @@ function AddTask() {
             value={formData.description}
             onChange={handleChange}
             rows="3"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           />
         </div>
         <div className="flex items-center">
@@ -89,26 +90,28 @@ function AddTask() {
             name="completed"
             checked={formData.completed}
             onChange={handleChange}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
           />
-          <label htmlFor="completed" className="ml-2 block text-sm text-gray-700">
+          <label htmlFor="completed" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
             Mark as completed
           </label>
         </div>
-        <div className="flex space-x-4 pt-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-          >
-            {loading ? 'Adding Task...' : 'Add Task'}
-          </button>
+        <div className="flex justify-end space-x-4 pt-4">
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600"
           >
+            <X className="h-4 w-4 mr-2" />
             Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+          >
+            <PlusCircle className="h-4 w-4 mr-2" />
+            {loading ? 'Adding...' : 'Add Task'}
           </button>
         </div>
       </form>
